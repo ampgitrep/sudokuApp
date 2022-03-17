@@ -1,10 +1,14 @@
 import { useState } from "react";
+import AddInputs from "./AddInputs";
+
 
 const Grid = ({ passGame }) => {
+  const [answers, setAnswers] = useState([])
+  const [randomSpots, setRandomSpots] = useState([]);
   const [game, setGame] = useState({
   });
-  const [clickedId, setClickedId] = useState({row: '', column: ''})
-  const [gameFlag, setGameFlag] = useState(false); 
+  const [clickedId, setClickedId] = useState({ row: '', column: '' })
+  const [gameFlag, setGameFlag] = useState(false);
   const array = [];
   const fillArray = () => {
     do {
@@ -18,6 +22,18 @@ const Grid = ({ passGame }) => {
     }
   };
 
+  const generateRandomSpots = () => {
+    const currentRandomSpots = []
+    do {
+      let randomIndex = Math.floor(Math.random() * (9 - 1));
+      if (currentRandomSpots.length < 5) {
+        if (currentRandomSpots.indexOf(randomIndex) === -1) {
+          currentRandomSpots.push(randomIndex);
+        }
+      }
+    } while (currentRandomSpots.length < 5);
+    setRandomSpots([...currentRandomSpots]);
+  }
 
   const getGame = () => {
     fillArray();
@@ -33,29 +49,37 @@ const Grid = ({ passGame }) => {
     const newGame = {
       rows: [[a, b, c, d, e, f, g, h, i], [d, e, f, g, h, i, a, b, c], [g, h, i, a, b, c, d, e, f], [c, a, b, h, i, g, e, f, d], [h, i, g, f, d, e, c, a, b], [e, f, d, c, a, b, h, i, g], [i, g, h, b, c, a, f, d, e], [f, d, e, i, g, h, b, c, a], [b, c, a, e, f, d, i, g, h]]
     };
+    generateRandomSpots();
     passGame(newGame);
     return newGame;
+  }
+  
+  const getAnswers = (newAnswer) => {
+    let currentAnswer = newAnswer;
+    setAnswers(currentAnswer);
   }
 
   const handleClick = (e) => {
     e.preventDefault();
     console.log(clickedId);
+    console.log(answers)
   }
 
   return (
     <div>
       <button onClick={() => setGame(getGame())}>make game</button>
-      {gameFlag ? <table>{game.rows.map((e,row)=> {
-       return (
-       <tr>
-         {e.map((e, column) => {
-           return (
-             <td key={column} onClick={()=> setClickedId({row: row, column: column})}>{e}</td>
-           )
-         })}
-       </tr> )
+      {gameFlag ? <table>{game.rows.map((e, row) => {
+        return (
+          <tr>
+            {e.map((e, column) => {
+              return (
+                <td key={column} onClick={() => setClickedId({ row: row, column: column })}>{e}</td>
+              )
+            })}
+          </tr>)
       })}</table> : null}
       <button onClick={handleClick}>show id</button>
+      <AddInputs getAnswers={getAnswers} />
     </div>
   )
 }
