@@ -5,7 +5,7 @@ const Game = () => {
   
   const passGame = (currentGame) => {
     const thisGame = currentGame;
-    console.log(thisGame);
+    setGame(thisGame);
   }
 
   return (
